@@ -13,10 +13,11 @@ const isRec = ref(false)
 
 const steps = ref([])
 
-let midi = null;
-let inputs = [];
-let outputs = [];
+const midiInputs = ref([])
+const midiOutputs = ref([])
 
+const midiInputCh = ref(0)
+const midiOutputCh = ref(2)
 
 
 for (let i = 0; i < 64; i++) {
@@ -26,42 +27,24 @@ for (let i = 0; i < 64; i++) {
 }
 
 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
-/*
-window.navigator.requestMIDIAccess().then((midi) => {
-  midi.inputs .forEach((input)  => console.log(input))
-  midi.outputs.forEach((output) => console.log(output))
-})
-*/
-
 
 function play(event) {
   isPlay.value = !isPlay.value
 
   if (isPlay.value) {
     currentStepNo.value = 1
+    // t = 60,000 ms / n / bpm
+    // 60,000 ms = 1 min
+    // n = 4 拍子
+    // t: 1stepの長さ ms
     const n = 4
     const t = (60 * 1000) / n / bpm.value
-    
+
     playTimerID = setInterval(tickStep, t)
-
-    sendMIDINoteOn(70)
-
-
-
   } else {
     currentStepNo.value = 0
     clearInterval(playTimerID)
-
-    sendMIDINoteOff(70)
-
-
   }
-
-
-  // t = 60,000 ms / n / bpm
-  // 60,000 ms = 1 min
-  // n = 4 拍子
-  // t: 1stepの長さ ms
 }
 
 function rec(event) {
@@ -73,65 +56,51 @@ function tickStep() {
   currentStepNo.value = currentStepNo.value > lastStepNo.value ? 1 : currentStepNo.value
 }
 
-function onMIDISuccess(m) {
-  midi = m;
-  var it = midi.inputs.values()
-  for (var o = it.next(); !o.done; o = it.next()) {
-    inputs.push(o.value)
-  }
-  var ot = midi.outputs.values()
-  for (var o = ot.next(); !o.done; o = ot.next()) {
-    outputs.push(o.value)
-  }
+function onMIDISuccess(midi) {
+  window.navigator.requestMIDIAccess().then((midi) => {
+    midi.inputs.forEach((input) => console.log(input))
+    midi.outputs.forEach((output) => console.log(output))
 
-  for (var cnt = 0; cnt < inputs.length; cnt++) {
-    inputs[cnt].onmidimessage = onMIDIEvent
-  }
+    midi.inputs.forEach((input) => {
+      console.log(input)
+      midiInputs.value.push(input)
+      input.onmidimessage = onMIDIEvent
+    })
+
+    midi.outputs.forEach((output) => {
+      console.log(output)
+      midiOutputs.value.push(output)
+    })
+  })
 }
 
 function onMIDIFailure(msg) {
-  console.log("onMIDIFailure()呼ばれただと？:" + msg)
+  console.log("onMIDIFailure" + msg)
 }
 
 function onMIDIEvent(e) {
-  if (e.target.id === 'input-1') {
-    console.log(e)
-  }
-
-
   if (e.data.length >= 2) {
     // なにかをうけとったときの処理
-    if (e.target.id === 'input-1') {
-      if (e.data[0] === 0x90) {
-        sendMIDINoteOn(e.data[1])
-      } else { //if(e.data[0] === 128) {
-        sendMIDINoteOff(e.data[1])
+    if (e.data[0] === 0x90 | midiInputCh.value) {
+        console.log(e)
+        sendMIDINoteOn(e.data[1], e.data[2])
+      } else if(e.data[0] === 0x80 | midiInputCh.value) {
+        console.log(e)
+        sendMIDINoteOff(e.data[1], e.data[2])
       }
-      /*
-      setTimeout(() => {
-        sendMIDINoteOff(e.data[1])
-      }, e.data[2])
-      */
-
-
-    }
-
-  }
-
-
-
-}
-
-function sendMIDINoteOn(note) {
-  if (outputs.length > 0) {
-    outputs[3].send([0x92, note, 0x7f])
   }
 }
 
-function sendMIDINoteOff(note) {
-  if (outputs.length > 0) {
-    outputs[3].send([0x82, note, 0x7f])
-  }
+function sendMIDINoteOn(note, velocity = 0x7f) {
+  midiOutputs.value.forEach((output) => {
+    output.send([0x90 | midiOutputCh.value, note, velocity])
+  })
+}
+
+function sendMIDINoteOff(note, velocity = 0x7f) {
+  midiOutputs.value.forEach((output) => {
+    output.send([0x80 | midiOutputCh.value, note, velocity])
+  })
 }
 
 </script>
@@ -334,6 +303,52 @@ function sendMIDINoteOff(note) {
         <button>PASTE</button>
       </fieldset>
 
+    </div>
+
+    <div class="controller">
+      <fieldset>
+        <label>MIDI INPUT CH</label>
+        <select name="midi-input-ch" v-model="midiInputCh">
+          <option value="0">Ch01</option>
+          <option value="1">Ch02</option>
+          <option value="2">Ch03</option>
+          <option value="3">Ch04</option>
+          <option value="4">Ch05</option>
+          <option value="5">Ch06</option>
+          <option value="6">Ch07</option>
+          <option value="7">Ch08</option>
+          <option value="8">Ch09</option>
+          <option value="9">Ch10</option>
+          <option value="10">Ch11</option>
+          <option value="11">Ch12</option>
+          <option value="12">Ch13</option>
+          <option value="13">Ch14</option>
+          <option value="14">Ch15</option>
+          <option value="15">Ch16</option>
+        </select>
+
+        <label>MIDI OUTPUT CH</label>
+        <select name="midi-output-ch" v-model="midiOutputCh">
+          <option value="0">Ch01</option>
+          <option value="1">Ch02</option>
+          <option value="2">Ch03</option>
+          <option value="3">Ch04</option>
+          <option value="4">Ch05</option>
+          <option value="5">Ch06</option>
+          <option value="6">Ch07</option>
+          <option value="7">Ch08</option>
+          <option value="8">Ch09</option>
+          <option value="9">Ch10</option>
+          <option value="10">Ch11</option>
+          <option value="11">Ch12</option>
+          <option value="12">Ch13</option>
+          <option value="13">Ch14</option>
+          <option value="14">Ch15</option>
+          <option value="15">Ch16</option>
+        </select>
+
+
+      </fieldset>
     </div>
 
   </div>
