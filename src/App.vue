@@ -58,9 +58,6 @@ function tickStep() {
 
 function onMIDISuccess(midi) {
   window.navigator.requestMIDIAccess().then((midi) => {
-    midi.inputs.forEach((input) => console.log(input))
-    midi.outputs.forEach((output) => console.log(output))
-
     midi.inputs.forEach((input) => {
       console.log(input)
       midiInputs.value.push(input)
