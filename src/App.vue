@@ -12,6 +12,7 @@ const isPlay = ref(false)
 const isRec = ref(false)
 
 const steps = ref([])
+const keys = ref([])
 
 const velocity = ref(127)
 
@@ -28,6 +29,10 @@ for (let i = 0; i < 64; i++) {
   let step = {}
   step.no = i + 1
   steps.value.push(step)
+}
+
+for (let i = 0; i < 128; i++) {
+  keys.value.push(false)
 }
 
 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
@@ -106,12 +111,14 @@ function onMIDIEvent(e) {
 
 function sendMIDINoteOn(note, velocity = 0x7f) {
   midiOutputs.value.forEach((output) => {
+    keys.value[note] = true
     output.send([0x90 | midiOutputCh.value, note, velocity])
   })
 }
 
 function sendMIDINoteOff(note, velocity = 0x00) {
   midiOutputs.value.forEach((output) => {
+    keys.value[note] = false
     output.send([0x80 | midiOutputCh.value, note, velocity])
   })
 }
@@ -207,75 +214,75 @@ function sendMIDINoteOff(note, velocity = 0x00) {
     <div style="display: inline-block;margin-top: 1em;">
       <ul class="keyboard">
         <li class="key-filler"></li>
-        <li class="key-b" v-on:mousedown="keyDown(49)" v-on:mouseup="keyUp(49)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(51)" v-on:mouseup="keyUp(51)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[49]}" v-on:mousedown="keyDown(49)" v-on:mouseup="keyUp(49)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[51]}" v-on:mousedown="keyDown(51)" v-on:mouseup="keyUp(51)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="keyDown(54)" v-on:mouseup="keyUp(54)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(56)" v-on:mouseup="keyUp(56)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(58)" v-on:mouseup="keyUp(58)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[54]}" v-on:mousedown="keyDown(54)" v-on:mouseup="keyUp(54)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[56]}" v-on:mousedown="keyDown(56)" v-on:mouseup="keyUp(56)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[58]}" v-on:mousedown="keyDown(58)" v-on:mouseup="keyUp(58)"></li>
 
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="keyDown(61)" v-on:mouseup="keyUp(61)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(63)" v-on:mouseup="keyUp(63)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[61]}" v-on:mousedown="keyDown(61)" v-on:mouseup="keyUp(61)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[63]}" v-on:mousedown="keyDown(63)" v-on:mouseup="keyUp(63)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="keyDown(66)" v-on:mouseup="keyUp(66)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(68)" v-on:mouseup="keyUp(68)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(70)" v-on:mouseup="keyUp(70)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[66]}" v-on:mousedown="keyDown(66)" v-on:mouseup="keyUp(66)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[68]}" v-on:mousedown="keyDown(68)" v-on:mouseup="keyUp(68)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[70]}" v-on:mousedown="keyDown(70)" v-on:mouseup="keyUp(70)"></li>
 
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="keyDown(73)" v-on:mouseup="keyUp(73)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(75)" v-on:mouseup="keyUp(75)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[73]}" v-on:mousedown="keyDown(73)" v-on:mouseup="keyUp(73)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[75]}" v-on:mousedown="keyDown(75)" v-on:mouseup="keyUp(75)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="keyDown(78)" v-on:mouseup="keyUp(78)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(80)" v-on:mouseup="keyUp(80)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(82)" v-on:mouseup="keyUp(82)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[78]}" v-on:mousedown="keyDown(78)" v-on:mouseup="keyUp(78)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[80]}" v-on:mousedown="keyDown(80)" v-on:mouseup="keyUp(80)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[82]}" v-on:mousedown="keyDown(82)" v-on:mouseup="keyUp(82)"></li>
 
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="keyDown(85)" v-on:mouseup="keyUp(85)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(87)" v-on:mouseup="keyUp(87)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[85]}" v-on:mousedown="keyDown(85)" v-on:mouseup="keyUp(85)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[87]}" v-on:mousedown="keyDown(87)" v-on:mouseup="keyUp(87)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="keyDown(90)" v-on:mouseup="keyUp(90)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(92)" v-on:mouseup="keyUp(92)"></li>
-        <li class="key-b" v-on:mousedown="keyDown(94)" v-on:mouseup="keyUp(94)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[90]}" v-on:mousedown="keyDown(90)" v-on:mouseup="keyUp(90)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[92]}" v-on:mousedown="keyDown(92)" v-on:mouseup="keyUp(92)"></li>
+        <li class="key-b" v-bind:class="{'key-press' : keys[94]}" v-on:mousedown="keyDown(94)" v-on:mouseup="keyUp(94)"></li>
         <li class="key-filler"></li>
       </ul>
 
       <!-- https://www.asahi-net.or.jp/~hb9t-ktd/music/Japan/Research/DTM/freq_map.html -->
 
       <ul class="keyboard">
-        <li class="key" v-on:mousedown="keyDown(48)" v-on:mouseup="keyUp(48)"></li>
-        <li class="key" v-on:mousedown="keyDown(50)" v-on:mouseup="keyUp(50)"></li>
-        <li class="key" v-on:mousedown="keyDown(52)" v-on:mouseup="keyUp(52)"></li>
-        <li class="key" v-on:mousedown="keyDown(53)" v-on:mouseup="keyUp(53)"></li>
-        <li class="key" v-on:mousedown="keyDown(55)" v-on:mouseup="keyUp(55)"></li>
-        <li class="key" v-on:mousedown="keyDown(57)" v-on:mouseup="keyUp(57)"></li>
-        <li class="key" v-on:mousedown="keyDown(59)" v-on:mouseup="keyUp(59)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[48]}" v-on:mousedown="keyDown(48)" v-on:mouseup="keyUp(48)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[50]}" v-on:mousedown="keyDown(50)" v-on:mouseup="keyUp(50)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[52]}" v-on:mousedown="keyDown(52)" v-on:mouseup="keyUp(52)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[53]}" v-on:mousedown="keyDown(53)" v-on:mouseup="keyUp(53)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[55]}" v-on:mousedown="keyDown(55)" v-on:mouseup="keyUp(55)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[57]}" v-on:mousedown="keyDown(57)" v-on:mouseup="keyUp(57)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[59]}" v-on:mousedown="keyDown(59)" v-on:mouseup="keyUp(59)"></li>
 
-        <li class="key" v-on:mousedown="keyDown(60)" v-on:mouseup="keyUp(60)"></li>
-        <li class="key" v-on:mousedown="keyDown(62)" v-on:mouseup="keyUp(62)"></li>
-        <li class="key" v-on:mousedown="keyDown(64)" v-on:mouseup="keyUp(64)"></li>
-        <li class="key" v-on:mousedown="keyDown(65)" v-on:mouseup="keyUp(65)"></li>
-        <li class="key" v-on:mousedown="keyDown(67)" v-on:mouseup="keyUp(67)"></li>
-        <li class="key" v-on:mousedown="keyDown(69)" v-on:mouseup="keyUp(69)"></li>
-        <li class="key" v-on:mousedown="keyDown(71)" v-on:mouseup="keyUp(71)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[60]}" v-on:mousedown="keyDown(60)" v-on:mouseup="keyUp(60)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[62]}" v-on:mousedown="keyDown(62)" v-on:mouseup="keyUp(62)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[64]}" v-on:mousedown="keyDown(64)" v-on:mouseup="keyUp(64)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[65]}" v-on:mousedown="keyDown(65)" v-on:mouseup="keyUp(65)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[67]}" v-on:mousedown="keyDown(67)" v-on:mouseup="keyUp(67)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[69]}" v-on:mousedown="keyDown(69)" v-on:mouseup="keyUp(69)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[71]}" v-on:mousedown="keyDown(71)" v-on:mouseup="keyUp(71)"></li>
 
-        <li class="key" v-on:mousedown="keyDown(72)" v-on:mouseup="keyUp(72)"></li>
-        <li class="key" v-on:mousedown="keyDown(74)" v-on:mouseup="keyUp(74)"></li>
-        <li class="key" v-on:mousedown="keyDown(76)" v-on:mouseup="keyUp(76)"></li>
-        <li class="key" v-on:mousedown="keyDown(77)" v-on:mouseup="keyUp(77)"></li>
-        <li class="key" v-on:mousedown="keyDown(79)" v-on:mouseup="keyUp(79)"></li>
-        <li class="key" v-on:mousedown="keyDown(81)" v-on:mouseup="keyUp(81)"></li>
-        <li class="key" v-on:mousedown="keyDown(83)" v-on:mouseup="keyUp(83)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[72]}" v-on:mousedown="keyDown(72)" v-on:mouseup="keyUp(72)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[74]}" v-on:mousedown="keyDown(74)" v-on:mouseup="keyUp(74)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[76]}" v-on:mousedown="keyDown(76)" v-on:mouseup="keyUp(76)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[77]}" v-on:mousedown="keyDown(77)" v-on:mouseup="keyUp(77)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[79]}" v-on:mousedown="keyDown(79)" v-on:mouseup="keyUp(79)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[81]}" v-on:mousedown="keyDown(81)" v-on:mouseup="keyUp(81)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[83]}" v-on:mousedown="keyDown(83)" v-on:mouseup="keyUp(83)"></li>
 
-        <li class="key" v-on:mousedown="keyDown(84)" v-on:mouseup="keyUp(84)"></li>
-        <li class="key" v-on:mousedown="keyDown(86)" v-on:mouseup="keyUp(86)"></li>
-        <li class="key" v-on:mousedown="keyDown(88)" v-on:mouseup="keyUp(88)"></li>
-        <li class="key" v-on:mousedown="keyDown(89)" v-on:mouseup="keyUp(89)"></li>
-        <li class="key" v-on:mousedown="keyDown(91)" v-on:mouseup="keyUp(91)"></li>
-        <li class="key" v-on:mousedown="keyDown(93)" v-on:mouseup="keyUp(93)"></li>
-        <li class="key" v-on:mousedown="keyDown(95)" v-on:mouseup="keyUp(95)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[84]}" v-on:mousedown="keyDown(84)" v-on:mouseup="keyUp(84)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[86]}" v-on:mousedown="keyDown(86)" v-on:mouseup="keyUp(86)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[88]}" v-on:mousedown="keyDown(88)" v-on:mouseup="keyUp(88)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[89]}" v-on:mousedown="keyDown(89)" v-on:mouseup="keyUp(89)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[91]}" v-on:mousedown="keyDown(91)" v-on:mouseup="keyUp(91)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[93]}" v-on:mousedown="keyDown(93)" v-on:mouseup="keyUp(93)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[95]}" v-on:mousedown="keyDown(95)" v-on:mouseup="keyUp(95)"></li>
 
-        <li class="key" v-on:mousedown="keyDown(96)" v-on:mouseup="keyUp(96)"></li>
+        <li class="key" v-bind:class="{'key-press' : keys[96]}" v-on:mousedown="keyDown(96)" v-on:mouseup="keyUp(96)"></li>
       </ul>
     </div>
 
@@ -501,6 +508,10 @@ div.controller {
 
 .active-step {
   background-color: yellow !important;
+}
+
+.key-press {
+  background-color: orange !important;
 }
 
 </style>
