@@ -13,11 +13,15 @@ const isRec = ref(false)
 
 const steps = ref([])
 
+const velocity = ref(127)
+
 const midiInputs = ref([])
 const midiOutputs = ref([])
 
 const midiInputCh = ref(0)
 const midiOutputCh = ref(2)
+
+const isChords = ref(false)
 
 
 for (let i = 0; i < 64; i++) {
@@ -51,9 +55,21 @@ function rec(event) {
   isRec.value = !isRec.value
 }
 
+function chords(event) {
+  isChords.value = !isChords.value
+}
+
 function tickStep() {
   currentStepNo.value++
   currentStepNo.value = currentStepNo.value > lastStepNo.value ? 1 : currentStepNo.value
+}
+
+function keyDown(tone) {
+  sendMIDINoteOn(tone, velocity.value)
+}
+
+function keyUp(tone) {
+  sendMIDINoteOff(tone)
 }
 
 function onMIDISuccess(midi) {
@@ -94,7 +110,7 @@ function sendMIDINoteOn(note, velocity = 0x7f) {
   })
 }
 
-function sendMIDINoteOff(note, velocity = 0x7f) {
+function sendMIDINoteOff(note, velocity = 0x00) {
   midiOutputs.value.forEach((output) => {
     output.send([0x80 | midiOutputCh.value, note, velocity])
   })
@@ -191,75 +207,75 @@ function sendMIDINoteOff(note, velocity = 0x7f) {
     <div style="display: inline-block;margin-top: 1em;">
       <ul class="keyboard">
         <li class="key-filler"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(49)" v-on:mouseup="sendMIDINoteOff(49)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(51)" v-on:mouseup="sendMIDINoteOff(51)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(49)" v-on:mouseup="keyUp(49)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(51)" v-on:mouseup="keyUp(51)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(54)" v-on:mouseup="sendMIDINoteOff(54)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(56)" v-on:mouseup="sendMIDINoteOff(56)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(58)" v-on:mouseup="sendMIDINoteOff(58)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(54)" v-on:mouseup="keyUp(54)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(56)" v-on:mouseup="keyUp(56)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(58)" v-on:mouseup="keyUp(58)"></li>
 
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(61)" v-on:mouseup="sendMIDINoteOff(61)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(63)" v-on:mouseup="sendMIDINoteOff(63)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(61)" v-on:mouseup="keyUp(61)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(63)" v-on:mouseup="keyUp(63)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(66)" v-on:mouseup="sendMIDINoteOff(66)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(68)" v-on:mouseup="sendMIDINoteOff(68)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(70)" v-on:mouseup="sendMIDINoteOff(70)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(66)" v-on:mouseup="keyUp(66)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(68)" v-on:mouseup="keyUp(68)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(70)" v-on:mouseup="keyUp(70)"></li>
 
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(73)" v-on:mouseup="sendMIDINoteOff(73)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(75)" v-on:mouseup="sendMIDINoteOff(75)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(73)" v-on:mouseup="keyUp(73)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(75)" v-on:mouseup="keyUp(75)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(78)" v-on:mouseup="sendMIDINoteOff(78)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(80)" v-on:mouseup="sendMIDINoteOff(80)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(82)" v-on:mouseup="sendMIDINoteOff(82)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(78)" v-on:mouseup="keyUp(78)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(80)" v-on:mouseup="keyUp(80)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(82)" v-on:mouseup="keyUp(82)"></li>
 
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(85)" v-on:mouseup="sendMIDINoteOff(85)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(87)" v-on:mouseup="sendMIDINoteOff(87)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(85)" v-on:mouseup="keyUp(85)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(87)" v-on:mouseup="keyUp(87)"></li>
         <li class="key-none"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(90)" v-on:mouseup="sendMIDINoteOff(90)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(92)" v-on:mouseup="sendMIDINoteOff(92)"></li>
-        <li class="key-b" v-on:mousedown="sendMIDINoteOn(94)" v-on:mouseup="sendMIDINoteOff(94)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(90)" v-on:mouseup="keyUp(90)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(92)" v-on:mouseup="keyUp(92)"></li>
+        <li class="key-b" v-on:mousedown="keyDown(94)" v-on:mouseup="keyUp(94)"></li>
         <li class="key-filler"></li>
       </ul>
 
       <!-- https://www.asahi-net.or.jp/~hb9t-ktd/music/Japan/Research/DTM/freq_map.html -->
 
       <ul class="keyboard">
-        <li class="key" v-on:mousedown="sendMIDINoteOn(48)" v-on:mouseup="sendMIDINoteOff(48)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(50)" v-on:mouseup="sendMIDINoteOff(50)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(52)" v-on:mouseup="sendMIDINoteOff(52)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(53)" v-on:mouseup="sendMIDINoteOff(53)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(55)" v-on:mouseup="sendMIDINoteOff(55)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(57)" v-on:mouseup="sendMIDINoteOff(57)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(59)" v-on:mouseup="sendMIDINoteOff(59)"></li>
+        <li class="key" v-on:mousedown="keyDown(48)" v-on:mouseup="keyUp(48)"></li>
+        <li class="key" v-on:mousedown="keyDown(50)" v-on:mouseup="keyUp(50)"></li>
+        <li class="key" v-on:mousedown="keyDown(52)" v-on:mouseup="keyUp(52)"></li>
+        <li class="key" v-on:mousedown="keyDown(53)" v-on:mouseup="keyUp(53)"></li>
+        <li class="key" v-on:mousedown="keyDown(55)" v-on:mouseup="keyUp(55)"></li>
+        <li class="key" v-on:mousedown="keyDown(57)" v-on:mouseup="keyUp(57)"></li>
+        <li class="key" v-on:mousedown="keyDown(59)" v-on:mouseup="keyUp(59)"></li>
 
-        <li class="key" v-on:mousedown="sendMIDINoteOn(60)" v-on:mouseup="sendMIDINoteOff(60)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(62)" v-on:mouseup="sendMIDINoteOff(62)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(64)" v-on:mouseup="sendMIDINoteOff(64)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(65)" v-on:mouseup="sendMIDINoteOff(65)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(67)" v-on:mouseup="sendMIDINoteOff(67)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(69)" v-on:mouseup="sendMIDINoteOff(69)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(71)" v-on:mouseup="sendMIDINoteOff(71)"></li>
+        <li class="key" v-on:mousedown="keyDown(60)" v-on:mouseup="keyUp(60)"></li>
+        <li class="key" v-on:mousedown="keyDown(62)" v-on:mouseup="keyUp(62)"></li>
+        <li class="key" v-on:mousedown="keyDown(64)" v-on:mouseup="keyUp(64)"></li>
+        <li class="key" v-on:mousedown="keyDown(65)" v-on:mouseup="keyUp(65)"></li>
+        <li class="key" v-on:mousedown="keyDown(67)" v-on:mouseup="keyUp(67)"></li>
+        <li class="key" v-on:mousedown="keyDown(69)" v-on:mouseup="keyUp(69)"></li>
+        <li class="key" v-on:mousedown="keyDown(71)" v-on:mouseup="keyUp(71)"></li>
 
-        <li class="key" v-on:mousedown="sendMIDINoteOn(72)" v-on:mouseup="sendMIDINoteOff(72)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(74)" v-on:mouseup="sendMIDINoteOff(74)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(76)" v-on:mouseup="sendMIDINoteOff(76)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(77)" v-on:mouseup="sendMIDINoteOff(77)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(79)" v-on:mouseup="sendMIDINoteOff(79)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(81)" v-on:mouseup="sendMIDINoteOff(81)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(83)" v-on:mouseup="sendMIDINoteOff(83)"></li>
+        <li class="key" v-on:mousedown="keyDown(72)" v-on:mouseup="keyUp(72)"></li>
+        <li class="key" v-on:mousedown="keyDown(74)" v-on:mouseup="keyUp(74)"></li>
+        <li class="key" v-on:mousedown="keyDown(76)" v-on:mouseup="keyUp(76)"></li>
+        <li class="key" v-on:mousedown="keyDown(77)" v-on:mouseup="keyUp(77)"></li>
+        <li class="key" v-on:mousedown="keyDown(79)" v-on:mouseup="keyUp(79)"></li>
+        <li class="key" v-on:mousedown="keyDown(81)" v-on:mouseup="keyUp(81)"></li>
+        <li class="key" v-on:mousedown="keyDown(83)" v-on:mouseup="keyUp(83)"></li>
 
-        <li class="key" v-on:mousedown="sendMIDINoteOn(84)" v-on:mouseup="sendMIDINoteOff(84)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(86)" v-on:mouseup="sendMIDINoteOff(86)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(88)" v-on:mouseup="sendMIDINoteOff(88)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(89)" v-on:mouseup="sendMIDINoteOff(89)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(91)" v-on:mouseup="sendMIDINoteOff(91)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(93)" v-on:mouseup="sendMIDINoteOff(93)"></li>
-        <li class="key" v-on:mousedown="sendMIDINoteOn(95)" v-on:mouseup="sendMIDINoteOff(95)"></li>
+        <li class="key" v-on:mousedown="keyDown(84)" v-on:mouseup="keyUp(84)"></li>
+        <li class="key" v-on:mousedown="keyDown(86)" v-on:mouseup="keyUp(86)"></li>
+        <li class="key" v-on:mousedown="keyDown(88)" v-on:mouseup="keyUp(88)"></li>
+        <li class="key" v-on:mousedown="keyDown(89)" v-on:mouseup="keyUp(89)"></li>
+        <li class="key" v-on:mousedown="keyDown(91)" v-on:mouseup="keyUp(91)"></li>
+        <li class="key" v-on:mousedown="keyDown(93)" v-on:mouseup="keyUp(93)"></li>
+        <li class="key" v-on:mousedown="keyDown(95)" v-on:mouseup="keyUp(95)"></li>
 
-        <li class="key" v-on:mousedown="sendMIDINoteOn(96)" v-on:mouseup="sendMIDINoteOff(96)"></li>
+        <li class="key" v-on:mousedown="keyDown(96)" v-on:mouseup="keyUp(96)"></li>
       </ul>
     </div>
 
@@ -289,7 +305,7 @@ function sendMIDINoteOff(note, velocity = 0x7f) {
       </fieldset>
       <fieldset>
         <label>VELOCITY</label>
-        <input type="number" style="width: 4em;text-align: center;" value="127" />
+        <input type="number" style="width: 4em;text-align: center;" v-model="velocity" />
       </fieldset>
       <fieldset>
         <button v-on:click="play" v-bind:class="{'play' : isPlay}">PLAY</button>
@@ -343,9 +359,12 @@ function sendMIDINoteOff(note, velocity = 0x7f) {
           <option value="14">Ch15</option>
           <option value="15">Ch16</option>
         </select>
-
-
       </fieldset>
+
+      <fieldset>
+        <button v-on:click="chords" v-bind:class="{'play' : isChords}">CHORDS</button>
+      </fieldset>
+
     </div>
 
   </div>
