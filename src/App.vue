@@ -3,6 +3,8 @@ import { ref } from 'vue'
 
 let playTimerID = 0
 
+const messages = ref([])
+
 const bpm = ref(120)
 
 const currentStepNo = ref(0)
@@ -25,6 +27,7 @@ const midiOutputCh = ref(2)
 const isChords = ref(false)
 
 
+
 for (let i = 0; i < 64; i++) {
   let step = {}
   step.no = i + 1
@@ -33,6 +36,10 @@ for (let i = 0; i < 64; i++) {
 
 for (let i = 0; i < 128; i++) {
   keys.value.push(false)
+}
+
+for(let i = 0; i < 10; i++) {
+  messages.value.push(" ")
 }
 
 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
@@ -81,12 +88,14 @@ function onMIDISuccess(midi) {
   window.navigator.requestMIDIAccess().then((midi) => {
     midi.inputs.forEach((input) => {
       console.log(input)
+      outputMessage("[INOUT]"  + input.id + ':' + input.manufacturer + ':' + input.name)
       midiInputs.value.push(input)
       input.onmidimessage = onMIDIEvent
     })
 
     midi.outputs.forEach((output) => {
       console.log(output)
+      outputMessage("[OUTPUT]"  + output.id + ':' + output.manufacturer + ':' + output.name + ':')
       midiOutputs.value.push(output)
     })
   })
@@ -99,6 +108,7 @@ function onMIDIFailure(msg) {
 function onMIDIEvent(e) {
   if (e.data.length >= 2) {
     // なにかをうけとったときの処理
+    outputMessage(e.data)
     if (e.data[0] === 0x90 | midiInputCh.value) {
         console.log(e)
         sendMIDINoteOn(e.data[1], e.data[2])
@@ -121,6 +131,15 @@ function sendMIDINoteOff(note, velocity = 0x00) {
     keys.value[note] = false
     output.send([0x80 | midiOutputCh.value, note, velocity])
   })
+}
+
+function outputMessage(message) {
+
+  if(messages.value.length >= 10) {
+    messages.value.splice(0, 1)
+  }
+  messages.value.push(message)
+
 }
 
 </script>
@@ -373,6 +392,9 @@ function sendMIDINoteOff(note, velocity = 0x00) {
       </fieldset>
 
     </div>
+    <div style="width: 100%;background-color: #333;margin-top: 1em;padding: 0.5em;">
+      <pre class="message" v-for="message in messages">{{ message }}</pre>
+    </div>
 
   </div>
 </template>
@@ -512,6 +534,11 @@ div.controller {
 
 .key-press {
   background-color: orange !important;
+}
+
+.message {
+  margin: 0;
+  text-align: left;
 }
 
 </style>
