@@ -26,11 +26,20 @@ const midiOutputCh = ref(2)
 
 const isChords = ref(false)
 
-
+const stepLength = ref(0)
 
 for (let i = 0; i < 64; i++) {
   let step = {}
   step.no = i + 1
+  // 48 - 96
+  //step.tone = Math.floor(Math.random() * 48 + 48)
+  if(Math.random() > 0.25) {
+    step.tone = Math.floor(Math.random() * 48 + 48)
+  } else {
+    step.tone = -1
+  }
+
+  stop.velocity = 100
   steps.value.push(step)
 }
 
@@ -56,6 +65,8 @@ function play(event) {
     const n = 4
     const t = (60 * 1000) / n / bpm.value
 
+    stepLength.value = t
+
     playTimerID = setInterval(tickStep, t)
   } else {
     currentStepNo.value = 0
@@ -72,6 +83,14 @@ function chords(event) {
 }
 
 function tickStep() {
+  const step = steps.value[currentStepNo.value - 1]
+  if (step.tone >= 0) {
+    sendMIDINoteOn(step.tone, step.velocity)
+    setTimeout(() => {
+      sendMIDINoteOff(step.tone)
+    }, stepLength.value * 2);
+  }
+
   currentStepNo.value++
   currentStepNo.value = currentStepNo.value > lastStepNo.value ? 1 : currentStepNo.value
 }
