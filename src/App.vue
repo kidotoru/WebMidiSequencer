@@ -28,13 +28,27 @@ const isChords = ref(false)
 
 const stepLength = ref(0)
 
+// 1,3,5,6,8,10,12,13
+const majarScale = [1, 3, 5, 6, 8, 10, 12, 13]
+const nMinorScale = [1, 3, 4, 6, 8, 9, 11, 13]
+const yScale = [1, 3, 5, 8, 10]
+const Cmaj7 = [1, 5, 8, 12]
+
+
+let scale = Cmaj7
+
 for (let i = 0; i < 64; i++) {
   let step = {}
   step.no = i + 1
   // 48 - 96
   //step.tone = Math.floor(Math.random() * 48 + 48)
-  if(Math.random() > 0.25) {
-    step.tone = Math.floor(Math.random() * 48 + 48)
+  // 1拍目、と拍は必ず鳴らす　それ以外はランダムにならす
+  if(step.no === 1 || (step.no -1) % 4 === 0 || Math.random() > 0.25) {
+    // 指定したスケールの中から選択
+    let tmp = scale[Math.round(Math.random() * scale.length - 1)] - 1
+    // 5 = 基準のオクターブ
+    // 1 = オクターブの範囲（基準のオクターブ+1で計2オクターブ）
+    step.tone = tmp + 12 * (5 + Math.round(Math.random() * 1))
   } else {
     step.tone = -1
   }

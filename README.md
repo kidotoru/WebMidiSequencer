@@ -5,3 +5,23 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+
+
+## 
+
+$ npm create vite@latest
+
+npm install
+
+npx vite
+
+npx vite build
+
+
+## midi
+
+MIDIノートと周波数の関係
+freq = 440.0 * pow(2.0, (notenumber - 69.0) / 12.0)
+
+
+https://scale-player.vercel.app/
